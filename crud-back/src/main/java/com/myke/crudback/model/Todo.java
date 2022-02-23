@@ -13,7 +13,7 @@ public class Todo {
     private Long id;
 
     private String name;
-    private Boolean isCompleted;
+    private boolean isCompleted;
 
 
     //GETTER && SETTER
