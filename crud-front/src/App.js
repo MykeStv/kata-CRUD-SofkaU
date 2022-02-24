@@ -18,8 +18,8 @@ const Form = () => {
 
   const formRef = useRef(null);
 
-  const { dispatch, state: {item} } = useContext(Store);
-  const [state, setState] = useState({}); //Estado interno
+  const { dispatch, state: {item } } = useContext(Store);
+  const [state, setState] = useState({item}); //Estado interno
 
   const onAdd = (event) => {
     event.preventDefault();
@@ -48,11 +48,39 @@ const Form = () => {
 
   };
 
+  const onEdit = (event) => {
+    event.preventDefault();
+    
+    const request = {
+      name: state.name,
+      id: item.id,
+      isCompleted: item.isCompleted
+    };
+
+    fetch(HOST_API+"/todo/update", {
+
+      method: "PUT",
+      body: JSON.stringify(request),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+
+    })
+    .then(response => response.json())
+    .then((todo) => {
+      dispatch({ type: "update-item", item: todo });
+      setState({ name: "" });
+      formRef.current.reset();
+    })
+
+  };
+
   return <form ref={formRef}>
 
     <input
       type='text'
       name='name'
+      defaultValue={item.name}
       onChange={(event) => {
         setState({ ...state, name: event.target.value })
       }}
@@ -64,9 +92,12 @@ const Form = () => {
         setState({ ...state, description: event.target.value })
       }}
     /> */}
-    <button onClick={onAdd}> 
-      Agregar
-    </button>
+    {
+      item.id && <button onClick={onEdit}>Actualizar</button>
+    }
+    {
+      !item.id && <button onClick={onAdd}>Agregar</button>
+    }   
 
   </form>
 };
